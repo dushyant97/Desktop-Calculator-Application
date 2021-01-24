@@ -43,8 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateCommand.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CreateCommand.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CalculatorCommands.cs" />
     <Compile Include="CalculatorConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CommandLine.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommandLine.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -54,6 +65,16 @@
       <Project>{85c12477-fb2e-4789-8d52-444c1ca2a777}</Project>
       <Name>CalculatorLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CreateCommand.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CreateCommand.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CommandLine.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommandLine.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

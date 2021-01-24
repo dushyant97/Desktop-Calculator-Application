@@ -1,12 +1,9 @@
 ﻿using System;
 
-
-namespace CalculatorLibrary
+namespace Grapecity.Internship.Assignments.CalculatorLibrary
 {
-    public static class Operations
+    public class ArithmaticOperations
     {
-        #region public methods
-
         /// <summary>
         /// Add method for two or more decimal numbers
         /// </summary>
@@ -15,9 +12,10 @@ namespace CalculatorLibrary
         /// <param name="nums"></param>
         /// <returns></returns>
         public static double Add(double a, double b, params double[] nums)
+
         {
             double output = a + b;
-            foreach(double c in nums)
+            foreach (double c in nums)
             {
                 output += c;
             }
@@ -33,8 +31,8 @@ namespace CalculatorLibrary
         /// <returns></returns>
         public static double Subtract(double a, double b, params double[] nums)
         {
-            double output =  a - b;
-            foreach(double c in nums)
+            double output = a - b;
+            foreach (double c in nums)
             {
                 output -= c;
             }
@@ -63,6 +61,37 @@ namespace CalculatorLibrary
             return a / b;
         }
 
+        /// <summary>
+        /// Returns SquareRoot of a number
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static double SquareRoot(double a)
+        {
+            return Math.Sqrt(a);
+        }
+
+        /// <summary>
+        /// Returns number with opposite sign
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static double PlusMinus(double a)
+        {
+            if(a == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return -a;
+            }
+        }
+    }
+
+    public class ScientificOperations : ArithmaticOperations
+
+    {
         /// <summary>
         /// Returns Cosine of the input parameter
         /// </summary>
@@ -95,26 +124,6 @@ namespace CalculatorLibrary
         }
 
         /// <summary>
-        /// Returns SquareRoot of a number
-        /// </summary>
-        /// <param name="a"></param>
-        /// <returns></returns>
-        public static double SquareRoot(double a)
-        {
-            return Math.Sqrt(a);
-        }
-
-        /// <summary>
-        /// Returns number with opposite sign
-        /// </summary>
-        /// <param name="a"></param>
-        /// <returns></returns>
-        public static double PlusMinus(double a)
-        {
-            return -a;
-        }
-
-        /// <summary>
         /// This method performs increment operation on a number
         /// </summary>
         /// <param name="a"></param>
@@ -133,6 +142,63 @@ namespace CalculatorLibrary
         {
             return a - 1;
         }
-        #endregion
+
+        /// <summary>
+        /// This method returns factorial of a number
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static int Factorial(int a)
+        {
+            int result = 1;
+            if(a == 0)
+            {
+                return result;
+            }
+            else if(a < 0)
+            {
+                return 0;
+            }
+            else
+            {
+                while (a != 1)
+                {
+                    result *= a;
+                    a -= 1;
+                }
+                return result;
+
+            }
+        }
+
+        /// <summary>
+        /// This method returns inverse of a number
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static double Inverse(double a)
+        {
+            return (1 / a);
+        }
+
+        /// <summary>
+        /// This method returns Log to base 10 for a number
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static double Log10(double a)
+        {
+            return Math.Log10(a);
+        }
+
+        /// <summary>
+        /// This method returns Log to the base e for a number
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static double Ln(double a)
+        {
+            return Math.Log(a);
+        }
     }
 }

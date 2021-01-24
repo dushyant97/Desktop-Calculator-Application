@@ -1,36 +1,41 @@
-﻿using CalculatorLibrary;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Resources;
 
-namespace CalculatorConsole
+namespace Grapecity.Internship.Assignments.CalculatorConsole
 {
     public class CalculatorConsole
     {
+        #region Resources
+        ResourceManager rm = new ResourceManager("CalculatorConsole.CommandLine", Assembly.GetExecutingAssembly());
+        #endregion
+
+        
         public static void Main(string[] args)
         {
             new CalculatorConsole()
-                .Start();            
+                .Start();
         }
+
+        #region Private Methods
 
         /// <summary>
         /// Starter method
         /// </summary>
-        public void Start()
+        private void Start()
         {
             bool flag = false;
-
+            
             do
             {
                 string output = "";
-                int operation = Menu();
+                int choice = Menu();
 
                 //Conditional statement for handling type of operation
-                if (operation >= 1 && operation <= 4)
+                if( (choice >= 1) && (choice <= int.Parse(rm.GetString("OperationCount"))) )
                 {
-                    output = BinaryOperation(operation);
-                }
-                else if (operation >= 5 && operation <= 11)
-                {
-                    output = UnaryOperation(operation);
+                    output = Operation(choice);
                 }
 
                 //Conditional statement for handling output and exit menu
@@ -38,13 +43,11 @@ namespace CalculatorConsole
                 {
                     Console.Clear();
                     Console.WriteLine("The result is " + output);
-                    Console.WriteLine("Try Again ? Press 1 for Yes or any other number for No");
+                    Console.WriteLine(rm.GetString("RetryOperation"));
                     flag = (Console.ReadLine() == "1");
-                }
+                } 
             } while (flag);
         }
-
-        #region Private Methods
 
         /// <summary>
         /// Method for displaying menu options and returns the selected operation
@@ -55,19 +58,19 @@ namespace CalculatorConsole
             int selection;
 
             Console.Clear();
-            Console.WriteLine("Enter the operation to be performed");
-            Console.WriteLine("1. Addition");
-            Console.WriteLine("2. Subtraction");
-            Console.WriteLine("3. Multiplication");
-            Console.WriteLine("4. Division");
-            Console.WriteLine("5. NOT");
-            Console.WriteLine("6. SquareRoot");
-            Console.WriteLine("7. Increment");
-            Console.WriteLine("8. Decrement");
-            Console.WriteLine("9. Sine");
-            Console.WriteLine("10. Cos");
-            Console.WriteLine("11. Tan");
-            Console.WriteLine("12. Exit");
+            Console.WriteLine(rm.GetString("EnterOperations"));
+            Console.WriteLine(rm.GetString("MenuOption_1"));
+            Console.WriteLine(rm.GetString("MenuOption_2"));
+            Console.WriteLine(rm.GetString("MenuOption_3"));
+            Console.WriteLine(rm.GetString("MenuOption_4"));
+            Console.WriteLine(rm.GetString("MenuOption_5"));
+            Console.WriteLine(rm.GetString("MenuOption_6"));
+            Console.WriteLine(rm.GetString("MenuOption_7"));
+            Console.WriteLine(rm.GetString("MenuOption_8"));
+            Console.WriteLine(rm.GetString("MenuOption_9"));
+            Console.WriteLine(rm.GetString("MenuOption_10"));
+            Console.WriteLine(rm.GetString("MenuOption_11"));
+            Console.WriteLine(rm.GetString("MenuOption_12"));
 
             try
             {
@@ -75,7 +78,7 @@ namespace CalculatorConsole
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception Raised: " + e.Message);
+                Console.WriteLine(e.Message);
                 Console.ReadKey();
                 selection = 0;
             }
@@ -83,133 +86,95 @@ namespace CalculatorConsole
         }
 
         /// <summary>
-        /// Method for handling binary operations
-        /// </summary>
-        /// <param name="choice"></param>
-        /// <returns></returns> 
-        private string BinaryOperation(int choice)
-        {
-            double result, first_num, second_num;
-            Console.Clear();
-
-            try
-            {
-                Console.WriteLine("Enter the first number");
-                first_num = Convert.ToDouble(Console.ReadLine());
-
-                Console.WriteLine("Enter the second number");
-                second_num = Convert.ToDouble(Console.ReadLine());
-            }
-            catch(FormatException)
-            {
-                Console.WriteLine("Invalid Format provided: Format Exception Raised");
-                result = Double.NaN;
-                return result.ToString();
-            }
-
-            //Conditional switch statement for binary operations
-            switch (choice)
-            {
-                case 1:
-                    {
-                        result = Operations.Add(first_num, second_num);
-                        break;
-                    }
-                case 2:
-                    {
-                        result = Operations.Subtract(first_num, second_num);
-                        break;
-                    }
-                case 3:
-                    {
-                        result = Operations.Multiply(first_num, second_num);
-                        break;
-                    }
-                case 4:
-                    {
-                        result = Operations.Divide(first_num, second_num);
-                        break;
-                    }
-                default:
-                    {
-                        Console.WriteLine("Wrong input please try again");
-                        result = Double.NaN;
-                        break;
-                    }
-            }
-            return result.ToString();
-        }
-
-        /// <summary>
-        /// Method for handling Unary Operations
+        /// This method handles IO operation according to operation type i.e. Unary or Binary and calls appropriate method and returns output
         /// </summary>
         /// <param name="choice"></param>
         /// <returns></returns>
-        private string UnaryOperation(int choice)
+        private string Operation(int choice)
         {
-            double result, num;
-
+            double result;
+                                    
             Console.Clear();
-            try
+            new CreateCommand();
+
+            //Conditional Statement for determining type of operation
+            if (rm.GetString(choice.ToString()) == "Binary")
             {
-                Console.WriteLine("Enter the first number");
-                num = Convert.ToDouble(Console.ReadLine());
+                double first_num, second_num;
+                try
+                {
+                    Console.WriteLine("Enter the first number");
+                    first_num = Convert.ToDouble(Console.ReadLine());
+
+                    Console.WriteLine("Enter the second number");
+                    second_num = Convert.ToDouble(Console.ReadLine());
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.ReadLine();
+                    result = double.NaN;
+                    return result.ToString();
+                }
+
+                //Exception Handling for Invalid Key
+                try
+                {
+                    //var interface_name = type.IBinaryCommand;
+                    
+                    var objType = CreateCommand.Command_dict[choice];
+                    var obj = Activator.CreateInstance(objType, first_num, second_num) as IBinaryCommand;
+                    result = obj.Calculate();
+                }
+                catch (KeyNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.ReadLine();
+
+                    result = double.NaN;
+                }
+                return result.ToString();
+
             }
-            catch (FormatException)
+            //Conditional Statement for determining type of operation
+            else if (rm.GetString(choice.ToString()) == "Unary")
             {
-                Console.WriteLine("Invalid Format provided: Format Exception Raised");
-                result = Double.NaN;
+                double num;
+
+                try
+                {
+                    Console.WriteLine("Enter the first number");
+                    num = Convert.ToDouble(Console.ReadLine());
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.ReadLine();
+                    result = double.NaN;
+                    return result.ToString();
+                }
+
+                //Exception Handling for Invalid Key
+                try
+                {
+                    var objType = CreateCommand.Command_dict[choice];
+                    var obj = Activator.CreateInstance(objType, num) as IUnaryCommand;
+                    result = obj.Calculate();
+                }
+                catch (KeyNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.ReadLine();
+
+                    result = double.NaN;
+                }
+
                 return result.ToString();
             }
 
-            //Conditional switch statement for unary operations
-            switch (choice)
-            {
-                case 5:
-                    {
-                        result = Operations.PlusMinus(num);
-                        break;
-                    }
-                case 6:
-                    {
-                        result = Operations.SquareRoot(num);
-                        break;
-                    }
-                case 7:
-                    {
-                        result = Operations.Increment(num);
-                        break;
-                    }
-                case 8:
-                    {
-                        result = Operations.Decrement(num);
-                        break;
-                    }
-                case 9:
-                    {
-                        result = Operations.Sin(num);
-                        break;
-                    }
-                case 10:
-                    {
-                        result = Operations.Cos(num);
-                        break;
-                    }
-                case 11: 
-                    {
-                        result = Operations.Tan(num);
-                        break;
-                    }
-                default:
-                    {
-                        Console.WriteLine("Wrong input please try again");
-                        result = Double.NaN;
-                        break;
-                    }
-            }
-            return result.ToString();
+            //if operation is neither unary nor binary, it returns NaN
+            return (double.NaN).ToString();
         }
-
         #endregion
     }
 }
